@@ -1,24 +1,35 @@
-# confirm vertx-mid:atarc-apisrv image exists
+### `vertx-mid:dev container (8080)`
 
-docker images
-
-### build vertx-mid:atarc-apisrv image if it doesn't already exist
-
-cd ~/checkout/vertx-mid/
+cd ~/checkout/playground/vertx-mid/
 docker build -t vertx-mid:dev .
 
-# restarting postgresql and vertx containers
+### `vertx-mid:dev and bitnami/postgresql:15 containers (8080 and 5432)`
 
-### clear existing images and containers
-
-cd ~/checkout/bitnami-postgresql/
-docker compose down
-
-### run postgres and vertx containers
+cd ~/checkout/playground/bitnami-postgresql
 docker compose up -d
 
-### confirm 5432 (postgres) and 8080 are both listening
-ss -nltp
+curl http://localhost:8080/customers
 
-### test the customers endpoint
-curl -k https://localhost:8080/customers
+### `bitnami/postgresql:15 container`
+
+docker run -itd --restart unless-stopped -e POSTGRES_USER=toor -e POSTGRES_PASSWORD=oicu812 -v /data:/var/lib/postgresql/data --name postgresql bitnami/postgresql
+
+psql -h 10.2.102.69 -p 5432 -d mytest -U toor
+psql -h localhost -p 5432 -d mytest -U toor
+oicu812
+
+### `nginx proxy to running vertx web service (80 and 443)`
+
+/etc/nginx/conf.d/react-admin.conf
+nginx -t
+systemctl start nginx
+
+curl -k https://localhost/customers
+curl -k https://vertx.local/customers
+https://vertx.local/customers
+
+### `nginx-proxy:dev container`
+
+cd ~/checkout/playground/nginx-proxy/
+docker build -t nginx-proxy:dev .
+docker compose up -d
